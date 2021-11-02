@@ -41,8 +41,8 @@
 
 - Клонируем репозиторий и перейдем в него
 ```python
- git clone https://github.com/EvgeniyBudaev/infra_sp2
- cd infra_sp2/
+ git clone https://github.com/EvgeniyBudaev/yamdb_final
+ cd yamdb_final/
 ```
 
 - Активируем виртуальное окружение
@@ -50,42 +50,71 @@
  .\venv\Scripts\activate
 ```
 
-- Установите Docker (https://docs.docker.com/get-started/)
-
-- Клонируем образ
-```python
- docker push ebudaev/yamdb:v1
-```
-
-- Запуск приложения
+- Остановить службу nginx на сервере:
 
 ```python
-  docker-compose up -d --build
+ sudo systemctl stop nginx
 ```
 
-- Выполнение миграции и создание суперпользователя
+- Установите docker и docker-compose на сервер:
+
+```python
+ sudo apt install docker.io
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+
+- Примените разрешения для исполняемого файла к двоичному файлу:
+
+```python
+  sudo chmod +x /usr/local/bin/docker-compose
+```
+
+- Протестируйте установку:
+
+```python
+  docker-compose --version
+```
+
+-  Отредактируйте файл nginx/default.conf и в строке server_name впишите свой IP
+
+- Скопируйте файлы docker-compose.yaml и nginx/default.conf из проекта на сервер
+  (на локальной машине в терминале по месту нахождения файла,
+  нужно создать на сервере mkdir nginx):
+
+```python
+  scp docker-compose.yaml <username>@<host>/home/<username>/docker-compose.yaml
+  scp default.conf <username>@<host>/home/<username>/nginx/default.conf
+```
+
+- После успешного деплоя зайдите на боевой сервер и выполните команды (только после первого деплоя):
+    Собрать статические файлы в STATIC_ROOT:
+```python
+  docker-compose exec web python3 manage.py collectstatic --noinput
+```
+
+- Применить миграции и создать суперпользователя:
 
 ```python
   docker-compose exec web python manage.py makemigrations
   docker-compose exec web python manage.py migrate --noinput
   docker-compose exec web python manage.py createsuperuser
-  docker-compose exec web python manage.py collectstatic --no-input
 ```
 
-- Заполнение базы начальными данными
+- Заполнить базу начальными данными:
 
 ```python
- docker-compose exec web python manage.py loaddata fixtures.json
+  docker-compose exec web python manage.py loaddata fixtures.json
 ```
 
 ###
-Теперь проект доступен по адресу http://127.0.0.1/. При этом номер порта указывать уже не надо: умный nginx принимает запросы на стандартном порте и перенаправляет их в приложение. Зайдите на http://127.0.0.1/admin/ и убедитесь, что страница отображается полностью: статика подгрузилась. Авторизуйтесь под аккаунтом суперпользователя и убедитесь, что миграции прошли успешно.
+Теперь проект доступен по адресу http://62.84.119.85.
 
-- Остановка приложения
+- Остановить приложение:
 
 ```python
   docker-compose down
 ```
+
 
 Инструкция как пользоваться данным API доступна по адресу http://localhost/redoc/
 

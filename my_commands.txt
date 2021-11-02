@@ -1,0 +1,30 @@
+1) Создайте и активируйте виртуальное окружение
+.\venv\Scripts\activate
+2) Установить зависимости
+pip install -r requirements.txt
+3) Перейти в папку infra_project
+cd infra_project
+4) Запустить все миграции
+python manage.py migrate
+5) Запуск сервера
+python manage.py runserver
+
+Workflow: PEP8
+
+6) Запуск тестов на проверку PEP8
+flake8
+7) Для устранения ошибок I1005,...
+isort .
+
+Workflow: тесты
+
+8) python manage.py test
+
+Workflow: сборка docker-образа
+
+9) Собрать образ и запустить контейнер
+docker build . # Соберёт образ на основе Dockerfile
+docker image ls # Отобразит информацию о всех образах
+docker run -p 5000:5000 <IMAGE ID> # Запустит контейнер из образа с <IMAGE ID>
+9156b798c2ab
+docker run -p 5000:5000 9156b798c2ab

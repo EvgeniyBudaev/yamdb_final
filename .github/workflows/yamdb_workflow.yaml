@@ -32,6 +32,7 @@ jobs:
         pytest
 
   build_and_push_to_docker_hub:
+    if: github.ref == 'refs/heads/master'
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     needs: tests
@@ -49,9 +50,10 @@ jobs:
         uses: docker/build-push-action@v2 # Выполняет push образа в DockerHub
         with:
           push: true
-          tags: ebudaev/yamdb_final:latest
+          tags: ebudaev/yamdb_final:v1
 
   deploy:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     steps:
@@ -65,7 +67,7 @@ jobs:
           stack_file_name: docker-compose.yaml
           script: |
             # Выполняет pull образа с DockerHub
-            sudo docker pull ebudaev/yamdb_final
+            sudo docker pull ebudaev/yamdb_final:v1
             sudo docker-compose stop
             sudo docker-compose rm web
             # Создаст файл для переменных окружения
@@ -80,6 +82,7 @@ jobs:
             sudo docker-compose up -d
 
   send_message:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     needs: deploy
     steps:

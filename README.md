@@ -1,4 +1,4 @@
-![yamdb_workflow](https://github.com/EvgeniyBudaev/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg?branch=master)
+![yamdb_workflow](https://github.com/EvgeniyBudaev/yamdb_final/actions/workflows/yamdb_workflow.yaml/badge.svg)
 
 # Яндекс.Практикум. Python backend. API YamDB
 
